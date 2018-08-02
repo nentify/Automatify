@@ -1,0 +1,8 @@
+[{
+  "modid": "automatify",
+  "name": "Automatify",
+  "description": "Helpful and configurable automation",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["Luke"]
+}]

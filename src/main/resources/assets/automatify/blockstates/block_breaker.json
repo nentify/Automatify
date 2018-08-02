@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "automatify:block_breaker"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}
