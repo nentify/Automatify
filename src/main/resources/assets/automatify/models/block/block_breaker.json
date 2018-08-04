@@ -1,6 +1,8 @@
 {
-  "parent": "block/cube_all",
+  "parent": "block/orientable",
   "textures": {
-    "all": "automatify:blocks/block_breaker"
+    "top": "blocks/furnace_top",
+    "front": "automatify:blocks/block_breaker",
+    "side": "blocks/furnace_side"
   }
 }

@@ -1,0 +1,7 @@
+{
+    "parent": "block/orientable_vertical",
+    "textures": {
+        "front": "automatify:blocks/block_breaker",
+        "side": "blocks/furnace_top"
+    }
+}
