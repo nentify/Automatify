@@ -50,15 +50,18 @@ public class BlockBlockBreaker extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        super.onBlockAdded(worldIn, pos, state);
+    }
+
+    @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         boolean receivingPower = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(pos.up());
 
         if (receivingPower && !state.getValue(POWERED)) {
             worldIn.setBlockState(pos, state.withProperty(POWERED, true));
-            getTileEntity(worldIn, pos).ifPresent(t -> t.setPowered(true));
         } else if (!receivingPower && state.getValue(POWERED)) {
             worldIn.setBlockState(pos, state.withProperty(POWERED, false));
-            getTileEntity(worldIn, pos).ifPresent(t -> t.setPowered(false));
         }
     }
 
@@ -78,17 +81,34 @@ public class BlockBlockBreaker extends Block implements ITileEntityProvider {
     public IBlockState getStateFromMeta(int meta)
     {
         return getDefaultState()
-                .withProperty(POWERED, meta == 1);
+                // extract first 3 bits (0111)
+                // & makes the 4th bit disappear (0 & anything = 0)
+                // and preserves the 3 bits we care about
+                .withProperty(FACING, EnumFacing.values()[meta & 7])
+                // 8 (1000) makes the first 3 bits always 0
+                // so we will get 8 or 0, depends if the 4th
+                // bit is 1 or 0 (left most)
+                .withProperty(POWERED, (meta & 8) != 0); // extract 4th (last) bit (1000)
     }
 
-    /**
-     * Convert the BlockState into the correct metadata value
-     */
     public int getMetaFromState(IBlockState state)
     {
+        // 0000
         int i = 0;
-        i = i | state.getValue(FACING).getIndex();
 
+        // indexes 0-5
+        // possible values for each of the 6 sides:
+        // 0000, 0001, 0010, 0011, 0100, 0101 (0-5)
+        // index 5 (6th side)
+        // 0101 -- 2 bits wasted as we cant have 0111 (7)
+        // ^ 4th bit unused (1000 = 8)
+        i |= state.getValue(FACING).getIndex();
+
+        // so we use the 8th bit for it's powered status
+        // if we need something else, this can always be
+        // calculated when the blcok loads
+        // i |= 8 = 1XXX
+        // otherwise, 0XXX
         if (state.getValue(POWERED))
         {
             i |= 8;

@@ -23,7 +23,6 @@ public class TileEntityBlockBreaker extends TileEntity implements ITickable {
 
     private AutomatifyFakePlayer fakePlayer;
 
-    private boolean powered;
     private BlockPos breakingPos;
     private IBlockState breakingState;
     private float progress;
@@ -37,10 +36,14 @@ public class TileEntityBlockBreaker extends TileEntity implements ITickable {
 
     @Override
     public void update() {
+        if (world.isRemote) {
+            return;
+        }
+
         IBlockState state = world.getBlockState(pos);
         Item.ToolMaterial toolMaterial = state.getValue(BlockBlockBreaker.TOOL_MATERIAL);
 
-        if (!powered) {
+        if (!state.getValue(BlockBlockBreaker.POWERED)) {
             return;
         }
 
@@ -84,10 +87,6 @@ public class TileEntityBlockBreaker extends TileEntity implements ITickable {
 
             resetBreakProgress();
         }
-    }
-
-    public void setPowered(boolean powered) {
-        this.powered = powered;
     }
 
     private void resetBreakProgress() {
