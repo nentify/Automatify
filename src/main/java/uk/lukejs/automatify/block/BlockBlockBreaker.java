@@ -13,10 +13,8 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import uk.lukejs.automatify.block.properties.PropertyToolMaterial;
 import uk.lukejs.automatify.tileentity.TileEntityBlockBreaker;
 
 import javax.annotation.Nullable;
@@ -25,18 +23,15 @@ import java.util.Optional;
 public class BlockBlockBreaker extends Block implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
-    public static final PropertyToolMaterial TOOL_MATERIAL = PropertyToolMaterial.create("tool_material");
     public static final PropertyBool POWERED = PropertyBool.create("powered");
 
-    private Item.ToolMaterial material;
+    private Item.ToolMaterial toolMaterial;
 
-    public BlockBlockBreaker(Item.ToolMaterial material) {
+    public BlockBlockBreaker(Item.ToolMaterial toolMaterial) {
         super(Material.ROCK);
 
-        this.material = material;
+        this.toolMaterial = toolMaterial;
 
-        setUnlocalizedName("automatify.blockBreaker");
-        setRegistryName(new ResourceLocation("automatify", "block_breaker"));
         setHardness(3.5F);
         setSoundType(SoundType.STONE);
 
@@ -44,7 +39,6 @@ public class BlockBlockBreaker extends Block implements ITileEntityProvider {
                 getBlockState()
                         .getBaseState()
                         .withProperty(FACING, EnumFacing.NORTH)
-                        .withProperty(TOOL_MATERIAL, Item.ToolMaterial.IRON)
                         .withProperty(POWERED, false)
         );
     }
@@ -67,7 +61,7 @@ public class BlockBlockBreaker extends Block implements ITileEntityProvider {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, TOOL_MATERIAL, POWERED);
+        return new BlockStateContainer(this, FACING, POWERED);
     }
 
     @Override
@@ -125,7 +119,7 @@ public class BlockBlockBreaker extends Block implements ITileEntityProvider {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityBlockBreaker();
+        return new TileEntityBlockBreaker(toolMaterial);
     }
 
     private Optional<TileEntityBlockBreaker> getTileEntity(World world, BlockPos pos) {

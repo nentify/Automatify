@@ -21,6 +21,8 @@ import java.util.function.Function;
 
 public class TileEntityBlockBreaker extends TileEntity implements ITickable {
 
+    private Item.ToolMaterial toolMaterial = Item.ToolMaterial.IRON; // need to insert from block or store in nbt or something
+
     private AutomatifyFakePlayer fakePlayer;
 
     private BlockPos breakingPos;
@@ -41,7 +43,8 @@ public class TileEntityBlockBreaker extends TileEntity implements ITickable {
         }
 
         IBlockState state = world.getBlockState(pos);
-        Item.ToolMaterial toolMaterial = state.getValue(BlockBlockBreaker.TOOL_MATERIAL);
+
+        System.out.println("powered: " + state.getValue(BlockBlockBreaker.POWERED));
 
         if (!state.getValue(BlockBlockBreaker.POWERED)) {
             return;
@@ -51,7 +54,7 @@ public class TileEntityBlockBreaker extends TileEntity implements ITickable {
         BlockPos newBreakingPos = pos.offset(facing);
         IBlockState newBreakingState = world.getBlockState(newBreakingPos);
 
-        if (!newBreakingPos.equals(breakingPos) || newBreakingState != breakingState) {
+        if (newBreakingState != breakingState || !newBreakingPos.equals(breakingPos)) {
             breakingPos = newBreakingPos;
             breakingState = newBreakingState;
 
@@ -63,7 +66,6 @@ public class TileEntityBlockBreaker extends TileEntity implements ITickable {
         }
 
         boolean canHarvest = toolMaterial.getHarvestLevel() >= breakingState.getBlock().getHarvestLevel(breakingState);
-        System.out.println(toolMaterial.getHarvestLevel() + " " + breakingState.getBlock().getHarvestLevel(breakingState));
         float harvestSpeedDivisor = canHarvest ? 30F : 100F;
 
         updateBreakProgress(p -> p + (toolMaterial.getEfficiency() / breakingState.getBlockHardness(world, breakingPos) / harvestSpeedDivisor));
@@ -100,7 +102,6 @@ public class TileEntityBlockBreaker extends TileEntity implements ITickable {
     }
 
     private void sendBreakProgress(int progress) {
-        System.out.println(this.progress + " " + progress);
         world.sendBlockBreakProgress(
                 fakePlayer.getEntityId(),
                 breakingPos,

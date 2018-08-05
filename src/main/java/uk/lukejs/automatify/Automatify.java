@@ -20,8 +20,8 @@ public class Automatify {
 
     private Logger logger;
 
-    @GameRegistry.ObjectHolder("automatify:block_breaker")
-    public static final Block blockBreaker = null;
+    @GameRegistry.ObjectHolder("automatify:iron_block_breaker")
+    public static final Block IRON_BLOCK_BREAKER = null;
 
     public Automatify() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -34,7 +34,10 @@ public class Automatify {
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
         event.getRegistry().registerAll(
-                new BlockBlockBreaker(Item.ToolMaterial.IRON).setCreativeTab(CreativeTabs.REDSTONE)
+                new BlockBlockBreaker(Item.ToolMaterial.IRON)
+                        .setUnlocalizedName("automatify.ironBlockBreaker")
+                        .setRegistryName(new ResourceLocation("automatify", "iron_block_breaker"))
+                        .setCreativeTab(CreativeTabs.REDSTONE)
         );
 
         GameRegistry.registerTileEntity(TileEntityBlockBreaker.class, new ResourceLocation("automatify", "block_breaker"));
@@ -43,7 +46,7 @@ public class Automatify {
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(
-                new ItemBlock(blockBreaker).setRegistryName(blockBreaker.getRegistryName())
+                new ItemBlock(IRON_BLOCK_BREAKER).setRegistryName(IRON_BLOCK_BREAKER.getRegistryName())
         );
     }
 }
